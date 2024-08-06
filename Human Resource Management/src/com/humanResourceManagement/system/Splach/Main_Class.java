@@ -32,7 +32,7 @@ public class Main_Class extends JFrame implements ActionListener {
         img.add(addButton);
 
         setSize(750,430);
-        setLocation(250,100);
+        setLocation(400,200);
         setLayout(null);
         setVisible(true);
     }

@@ -164,18 +164,13 @@ public class AddEmployee extends JFrame implements ActionListener {
                     updateStatement.setString(1,slotSelectedItem);
                     updateStatement.executeUpdate();
                 }else{
-                    JOptionPane.showMessageDialog(null,"No slots available");
+                    JOptionPane.showMessageDialog(null,"Selected slot not  available");
                     return;
                 }
 
             }catch (Exception y){
                 y.printStackTrace();
             }
-
-
-
-
-
 
              try{
 
@@ -206,10 +201,9 @@ public class AddEmployee extends JFrame implements ActionListener {
                  preparedStatement.setString(7,slotSelectedItem);
 
                  preparedStatement.executeUpdate();
-                 JOptionPane.showMessageDialog(null,"Details added successfully");
                  setVisible(false);
                  //goto dashboard
-                 new Main_Class();
+                 new ConfirmationPage();
 
              }catch (Exception a){
                  a.printStackTrace();
@@ -217,6 +211,7 @@ public class AddEmployee extends JFrame implements ActionListener {
 
         }else if(e.getSource()==back){
             new Main_Class();
+            this.dispose();
         }
     }
 }
