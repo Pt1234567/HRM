@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Random;
 
@@ -15,11 +16,9 @@ public class AddEmployee extends JFrame implements ActionListener {
     JTextField firstName;
     JTextField lastName;
     JTextField emailId;
-    JTextField address;
     JTextField phone;
-    JTextField preferredRole;
-    JTextField linkedInProfileUrl;
     JComboBox Boxeducation;
+    JComboBox BoxSlot;
     JButton add;
     JButton back;
     public AddEmployee(){
@@ -71,61 +70,41 @@ public class AddEmployee extends JFrame implements ActionListener {
         emailId.setBackground(new Color(223,242,249));
         img.add(emailId);
 
-        //Address
-        JLabel address1=new JLabel("Address");
-        address1.setBounds(400,200,150,30);
-        address1.setFont(new Font("SAN_SERIF",Font.BOLD,20));
-        img.add(address1);
-
-        address=new JTextField();
-        address.setBounds(600,200,150,30);
-        address.setBackground(new Color(223,242,249));
-        img.add(address);
-
         //Education
         JLabel education=new JLabel("Education");
-        education.setBounds(50,250,150,30);
+        education.setBounds(400,200,150,30);
         education.setFont(new Font("SAN_SERIF",Font.BOLD,20));
         img.add(education);
 
         String items []={"B.Tech","BCA","BBA","MBA","M.Tech","PHD"};
         Boxeducation=new JComboBox<>(items);
         Boxeducation.setBackground(new Color(230,242,249));
-        Boxeducation.setBounds(200,250,150,30);
+        Boxeducation.setBounds(600,200,150,30);
         img.add(Boxeducation);
 
         //Phone Number
         JLabel phone1=new JLabel("Phone Number");
-        phone1.setBounds(400,250,150,30);
+        phone1.setBounds(50,250,150,30);
         phone1.setFont(new Font("SAN_SERIF",Font.BOLD,20));
         img.add(phone1);
 
         phone=new JTextField();
-        phone.setBounds(600,250,150,30);
+        phone.setBounds(200,250,150,30);
         phone.setBackground(new Color(223,242,249));
         img.add(phone);
 
-        //LinkedIn
-        JLabel url=new JLabel("LinkedIn Url");
-        url.setBounds(50,300,150,30);
-        url.setFont(new Font("SAN_SERIF",Font.BOLD,20));
-        img.add(url);
 
-        linkedInProfileUrl=new JTextField();
-        linkedInProfileUrl.setBounds(200,300,150,30);
-        linkedInProfileUrl.setBackground(new Color(223,242,249));
-        img.add(linkedInProfileUrl);
+        JLabel slotSelect=new JLabel("Slot");
+        slotSelect.setBounds(400,250,150,30);
+        slotSelect.setFont(new Font("SAN_SERIF",Font.BOLD,20));
+        img.add(slotSelect);
 
-        //Role
-        JLabel role=new JLabel("Preferred Role");
-        role.setBounds(400,300,150,30);
-        role.setFont(new Font("SAN_SERIF",Font.BOLD,20));
-        img.add(role);
+        String totalSlot []={"Morning","Evening"};
+        BoxSlot=new JComboBox<>(totalSlot);
+        BoxSlot.setBackground(new Color(230,242,249));
+        BoxSlot.setBounds(600,250,150,30);
+        img.add(BoxSlot);
 
-        preferredRole=new JTextField();
-        preferredRole.setBounds(600,300,150,30);
-        preferredRole.setBackground(new Color(223,242,249));
-        img.add(preferredRole);
 
 
         //add button
@@ -160,12 +139,43 @@ public class AddEmployee extends JFrame implements ActionListener {
             //add in database
             String firstn=firstName.getText();
             String lastn=lastName.getText();
-            String addre=address.getText();
             String email=emailId.getText();
             String number=phone.getText();
-            String prefered=preferredRole.getText();
-            String linkedurl=linkedInProfileUrl.getText();
             String  education=(String)Boxeducation.getSelectedItem();
+            String slotSelectedItem=(String)BoxSlot.getSelectedItem();
+
+            try{
+                int  count=0;
+                conn connnect=new conn();
+                String selectQuery="SELECT available FROM slotselect WHERE slot=?";
+                PreparedStatement statement=connnect.connection.prepareStatement(selectQuery);
+                statement.setString(1,slotSelectedItem);
+
+                //execute query
+                ResultSet resultSet=statement.executeQuery();
+                //process result to get count
+
+                if(resultSet.next()){
+                    count=resultSet.getInt("available");
+                }
+                if(count>0){
+                    String updateCount="UPDATE slotselect SET available=available-1 WHERE slot=?";
+                    PreparedStatement updateStatement=connnect.connection.prepareStatement(updateCount);
+                    updateStatement.setString(1,slotSelectedItem);
+                    updateStatement.executeUpdate();
+                }else{
+                    JOptionPane.showMessageDialog(null,"No slots available");
+                    return;
+                }
+
+            }catch (Exception y){
+                y.printStackTrace();
+            }
+
+
+
+
+
 
              try{
 
@@ -176,28 +186,24 @@ public class AddEmployee extends JFrame implements ActionListener {
                          "first_name VARCHAR(255), " +
                          "last_name VARCHAR(255), " +
                          "email VARCHAR(255), " +
-                         "address TEXT, " +
                          "phone VARCHAR(20), " +
-                         "preferred_role VARCHAR(255), " +
-                         "linkedin_profile_url VARCHAR(255), " +
-                         "education TEXT" +
+                         "education TEXT, " +
+                         "slot TEXT" +
                          ");";
                  Statement statement = connect.connection.createStatement();
                  statement.executeUpdate(createTableQuery);
 
                  // Insert data into the table
-                 String insertQuery = "INSERT INTO employees (id, first_name, last_name, email, address, phone, preferred_role, linkedin_profile_url, education) " +
-                         "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                 String insertQuery = "INSERT INTO employees (id, first_name, last_name, email, phone, education,slot) " +
+                         "VALUES (?, ?, ?, ?, ?, ?,?)";
                  PreparedStatement preparedStatement = connect.connection.prepareStatement(insertQuery);
                  preparedStatement.setInt(1, id);
                  preparedStatement.setString(2, firstn);
                  preparedStatement.setString(3, lastn);
                  preparedStatement.setString(4, email);
-                 preparedStatement.setString(5, addre);
-                 preparedStatement.setString(6, number);
-                 preparedStatement.setString(7, prefered);
-                 preparedStatement.setString(8, linkedurl);
-                 preparedStatement.setString(9, education);
+                 preparedStatement.setString(5, number);
+                 preparedStatement.setString(6, education);
+                 preparedStatement.setString(7,slotSelectedItem);
 
                  preparedStatement.executeUpdate();
                  JOptionPane.showMessageDialog(null,"Details added successfully");
