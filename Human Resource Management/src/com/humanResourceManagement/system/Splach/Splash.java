@@ -9,16 +9,16 @@ public class Splash extends JFrame {
 
     public Splash(){
 
-        ImageIcon i1=new ImageIcon(ClassLoader.getSystemResource("icons/hrm.png"));
-        Image i2=i1.getImage().getScaledInstance(800,700,Image.SCALE_DEFAULT);
+        ImageIcon i1=new ImageIcon(ClassLoader.getSystemResource("icons/background.jpg"));
+        Image i2=i1.getImage().getScaledInstance(700,500,Image.SCALE_DEFAULT);
         ImageIcon i3=new ImageIcon(i2);
 
         JLabel image=new JLabel(i3);
-        image.setBounds(0,0,800,700);
+        image.setBounds(0,0,700,500);
         add(image);
 
-        setSize(800,700);
-        setLocation(500,50);
+        setSize(700,500);
+        setLocation(480,150);
         setLayout(null);
         setVisible(true);
 

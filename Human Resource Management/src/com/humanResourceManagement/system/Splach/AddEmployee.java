@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Random;
 
 public class AddEmployee extends JFrame implements ActionListener {
